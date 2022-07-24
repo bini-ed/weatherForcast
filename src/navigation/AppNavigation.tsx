@@ -10,8 +10,11 @@ const AppNavigation = () => {
       <Stack.Screen
         name="Main"
         component={MainScreen}
-        options={{title: 'Todays Weather'}}></Stack.Screen>
-      <Stack.Screen name="Forcast" component={Forcast}></Stack.Screen>
+        options={{headerShown: false}}></Stack.Screen>
+      <Stack.Screen
+        name="Forcast"
+        component={Forcast}
+        options={{headerShown: false}}></Stack.Screen>
     </Stack.Navigator>
   );
 };

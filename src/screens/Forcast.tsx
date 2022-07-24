@@ -24,6 +24,7 @@ import BottomSheet, {
   BottomSheetFlatList,
   BottomSheetSectionList,
 } from '@gorhom/bottom-sheet';
+import Header from '../component/Header';
 
 const {width, height} = Dimensions.get('screen');
 type WeatherInfo = {
@@ -75,6 +76,7 @@ const Forcast = () => {
 
   return (
     <View style={styles.card}>
+      <Header page="detail" title="Forcast" />
       {loading ? (
         <ActivityIndicator animating={loading} size={40} color="gold" />
       ) : (
@@ -118,7 +120,6 @@ const Forcast = () => {
             snapPoints={snapPoints}
             handleIndicatorStyle={{backgroundColor: 'gold'}}
             backgroundStyle={{backgroundColor: '#021833'}}
-
             // onChange={handleSheetChanges}
           >
             <BottomSheetSectionList

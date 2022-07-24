@@ -13,16 +13,20 @@ import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
 import MainScreen from './src/screens/MainScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import AppNavigation from './src/navigation/AppNavigation';
+import {Provider} from 'react-redux';
+import {store} from './src/appStateRedux/store';
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <SafeAreaView style={styles.container}>
-        <StatusBar />
-        <AppNavigation />
-        {/* <MainScreen /> */}
-      </SafeAreaView>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <SafeAreaView style={styles.container}>
+          <StatusBar />
+          <AppNavigation />
+          {/* <MainScreen /> */}
+        </SafeAreaView>
+      </NavigationContainer>
+    </Provider>
   );
 };
 
