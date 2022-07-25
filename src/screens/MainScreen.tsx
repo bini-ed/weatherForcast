@@ -23,7 +23,10 @@ let Clear = require('../assets/clear-sky.png');
 import {useNavigation} from '@react-navigation/native';
 import moment from 'moment';
 import Header from '../component/Header';
-import {getWeatherFetch} from '../appStateRedux/weatherSlice';
+import {
+  getWeatherFetch,
+  getWeatherForDateFetch,
+} from '../appStateRedux/weatherSlice';
 
 type WeatherInfo = {
   weather?: Array<object>;
@@ -58,11 +61,11 @@ const MainScreen = () => {
 
   useEffect(() => {
     getTodaysWeather();
-    dispatch(getWeatherFetch());
+    dispatch(getWeatherForDateFetch());
     return () => {
-      setWeather(undefined);
+      setWeather({});
     };
-  }, []);
+  }, [dispatch, weathers?.dt]);
 
   const handleDateChange = async (day: any) => {
     setLoading(true);
@@ -90,28 +93,25 @@ const MainScreen = () => {
       console.log('err', error);
     }
   };
-
+  // console.log(JSON.stringify(weathers, null, 2));
   const getTodaysWeather = async () => {
-    setLoading(true);
     try {
-      const {data} = await getCurrentWeather();
-      setWeather(data);
-      setSelectedDay(moment(data.dt * 1000).format('MMMM Do, dddd'));
-      data.weather[0].main.match(/clouds/i)
+      dispatch(getWeatherFetch());
+      setSelectedDay(moment(weathers?.dt * 1000).format('MMMM Do, dddd'));
+      weathers?.weather[0].main.match(/clouds/i)
         ? setSelectedDayWeather(Cloudy)
-        : data.weather[0].main.match(/sun/i)
+        : weathers?.weather[0].main.match(/sun/i)
         ? setSelectedDayWeather(Sunny)
-        : data.weather[0].main.match(/storm/i)
+        : weathers?.weather[0].main.match(/storm/i)
         ? setSelectedDayWeather(Stormy)
-        : data.weather[0].main.match(/wind/i)
+        : weathers?.weather[0].main.match(/wind/i)
         ? setSelectedDayWeather(Windy)
-        : data.weather[0].main.match(/rain/i)
+        : weathers?.weather[0].main.match(/rain/i)
         ? setSelectedDayWeather(Rainy)
         : setSelectedDayWeather(Clear);
     } catch (error) {
       console.log('error', error);
     }
-    setLoading(false);
   };
 
   return (
@@ -143,9 +143,13 @@ const MainScreen = () => {
           enableSwipeMonths={true}
         />
         <View style={styles.weatherInfo}>
-          {loading ? (
-            <ActivityIndicator animating={loading} color="white" size={45} />
-          ) : weather ? (
+          {cartLoading || loading ? (
+            <ActivityIndicator
+              animating={cartLoading || loading}
+              color="white"
+              size={45}
+            />
+          ) : weathers ? (
             <>
               <TouchableOpacity
                 onPress={() => navigation.navigate('Forcast' as never)}
@@ -173,7 +177,7 @@ const MainScreen = () => {
                 <View style={styles.card}>
                   <View style={styles.tempWithIcon}>
                     <Text style={styles.text}>
-                      {weather?.main?.temp_min || weather?.temp?.min}
+                      {weathers?.main?.temp_min || weather?.temp?.min}
                     </Text>
                     <Image source={Degree} style={styles.textIcon}></Image>
                   </View>
@@ -185,7 +189,7 @@ const MainScreen = () => {
                 <View style={styles.card}>
                   <View style={styles.tempWithIcon}>
                     <Text style={styles.text}>
-                      {weather?.main?.humidity || weather?.humidity}
+                      {weathers?.main?.humidity || weather?.humidity}
                     </Text>
                     <Image source={Degree} style={styles.textIcon}></Image>
                   </View>
@@ -195,7 +199,7 @@ const MainScreen = () => {
                 <View style={styles.card}>
                   <View style={styles.tempWithIcon}>
                     <Text style={styles.text}>
-                      {weather?.main?.temp_max || weather?.temp?.max}
+                      {weathers?.main?.temp_max || weather?.temp?.max}
                     </Text>
                     <Image source={Degree} style={styles.textIcon}></Image>
                   </View>
@@ -212,7 +216,7 @@ const MainScreen = () => {
                   marginVertical: 10,
                 }}>
                 <Text style={styles.tmpColor}>
-                  {weather?.main?.temp || weather?.temp?.day}
+                  {weathers?.main?.temp || weather?.temp?.day}
                 </Text>
                 <Image source={Degree} style={{width: 30, height: 30}}></Image>
               </View>
